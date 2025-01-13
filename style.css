@@ -1,0 +1,39 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  display: flex;
+  height: 100px;
+  background-image: radial-gradient(#3cb371, #2e8b57);
+  margin: 0 auto;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.weather,
+.exch-rate {
+  display: flex;
+  flex-direction: row;
+}
+
+.menu-right {
+  display: flex;
+  flex-direction: row;
+  gap: 25px;
+}
+
+.rate-img,
+.weather-img {
+  width: 45px;
+  height: 45px;
+}
+
+.text-1,
+.weather-text,
+.rate-text {
+  color: white;
+  font-size: 30px;
+  font-weight: 700;
+}
