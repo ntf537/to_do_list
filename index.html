@@ -9,8 +9,9 @@
   </head>
   <body>
     <header>
-      <div class="container">
+      <div class="header-container">
         <p class="text-1">Список дел</p>
+        <button class="task-add" id="add-button"></button>
         <section class="menu-right">
           <section class="weather">
             <p class="weather-text" id="temp"></p>
@@ -23,6 +24,56 @@
         </section>
       </div>
     </header>
+    <main>
+      <div class="container">
+        <dialog class="add-task-window" id="add-task-dialog">
+          <div
+            role="add-task"
+            aria-labelledby="dialog-add"
+            aria-modal="true"
+            class="inside-window"
+          >
+            <div class="get-information">
+              <form class="get-task-title-form">
+                <div class="input-form">
+                  <p class="dialog-text">Введите название дела:</p>
+                  <input type="text" id="get-task-title" />
+                </div>
+              </form>
+            </div>
+
+            <div class="save-and-exit">
+              <button class="task-save" id="save-button">Save</button>
+              <button class="task-exit" id="exit-button">Exit</button>
+            </div>
+          </div>
+        </dialog>
+        <ul class="to-do-list">
+          <li>
+            <div class="card">
+              <p class="task-title">Название</p>
+              <p class="task-desc">
+                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nihil
+                quidem quisquam quos esse iusto delectus porro eum tempora nisi,
+                quibusdam aspernatur odit voluptate facilis, earum fugiat.
+                Tempora temporibus eaque sit!
+              </p>
+              <div class="task-tag">
+                <p class="task-tag-text">#писятдва</p>
+              </div>
+              <div class="card-bottom">
+                <button class="task-edit" id="edit-button"></button>
+                <button class="task-delete" id="delete-button"></button>
+                <div class="task-status">
+                  <p class="task-status-text">Не выполнено</p>
+                </div>
+                <p class="task-deadline">2025-01-15</p>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </main>
   </body>
   <script src="script.js"></script>
 </html>
