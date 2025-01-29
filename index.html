@@ -37,7 +37,43 @@
               <form class="get-task-title-form">
                 <div class="input-form">
                   <p class="dialog-text">Введите название дела:</p>
-                  <input type="text" id="get-task-title" />
+                  <input type="text" class="input-text" id="get-task-title" />
+                </div>
+              </form>
+
+              <form class="get-task-description-form">
+                <div class="input-form">
+                  <p class="dialog-text">Введите описание дела:</p>
+                  <input
+                    type="text"
+                    class="input-text"
+                    id="get-task-description"
+                  />
+                </div>
+              </form>
+
+              <form class="get-task-deadline-form">
+                <div class="input-form">
+                  <p class="dialog-text">Введите дедлайн дела (YYYY-MM-DD):</p>
+                  <input
+                    type="text"
+                    class="input-text"
+                    id="get-task-deadline"
+                  />
+                </div>
+              </form>
+
+              <form class="get-task-tags-form">
+                <div class="input-form">
+                  <p class="dialog-text">Введите теги дела:</p>
+                  <input type="text" class="input-text" id="get-task-tags" />
+                </div>
+              </form>
+
+              <form class="get-task-deadline-form">
+                <div class="input-form">
+                  <p class="dialog-text">Введите статус дела:</p>
+                  <input type="text" class="input-text" id="get-task-status" />
                 </div>
               </form>
             </div>
@@ -48,7 +84,7 @@
             </div>
           </div>
         </dialog>
-        <ul class="to-do-list">
+        <ul class="to-do-list" id="cards-list-ul">
           <li>
             <div class="card">
               <p class="task-title">Название</p>
@@ -62,8 +98,8 @@
                 <p class="task-tag-text">#писятдва</p>
               </div>
               <div class="card-bottom">
-                <button class="task-edit" id="edit-button"></button>
-                <button class="task-delete" id="delete-button"></button>
+                <button class="task-edit"></button>
+                <button class="task-delete"></button>
                 <div class="task-status">
                   <p class="task-status-text">Не выполнено</p>
                 </div>
