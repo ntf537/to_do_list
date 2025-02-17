@@ -11,14 +11,18 @@ const cardsListUl = document.getElementById("cards-list-ul");
 const editButton = document.getElementById("edit-button");
 const addButton = document.getElementById("add-button");
 
+const errorText = document.getElementById("error-text");
+
 const saveAddButton = document.getElementById("add-task-save-button");
 const saveEditButton = document.getElementById("edit-task-save-button")
+const errorExitButton = document.getElementById("error-exit-button")
 
 const exitButtons = document.getElementsByClassName("task-exit");
 const editButtons = document.getElementsByClassName("task-edit");
 
 const dialogAddWindow = document.getElementById("add-task-dialog");
 const dialogEditWindow = document.getElementById("edit-task-dialog");
+const errorsWindow = document.getElementById("errors-notification")
 
 const inputTitle = document.getElementById("get-task-title");
 const inputDesc = document.getElementById("get-task-description");
@@ -368,24 +372,81 @@ function onAddClick() {
   dialogAddWindow.showModal();
 }
 
-function onSaveAddClick() {
-  idNum++;
+function checkValidation()
+{
+  if(inputTitle.value.trim().length != 0 && inputDesc.value.trim().length != 0 && inputDeadline.value.trim().length != 0 && inputTags.value.trim().length != 0 && inputStatus.value.trim().length !=0)
+  {
+    if(/^\d{4}-\d{2}-\d{2}$/.test(inputDeadline.value))
+    {
+      const [year, month, day] = inputDeadline.value.split('-').map(Number);
+      const date = new Date(year, month - 1, day);
 
-  MyCards.addData(
-    idNum,
-    inputTitle.value,
-    inputDesc.value,
-    inputDeadline.value,
-    inputTags.value,
-    inputStatus.value,
-    getNowTime(),
-    getNowTime(),
-    "created",
-    getNowTime()
-  );
-  MyCards.submitAddedData();
-  MyCards.renderSumbittedAddedData();
-  dialogAddWindow.close();
+      if(date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day)
+      {
+        for(let i = 0; i < MyCards.cardsList.length; i++)
+        {
+          for(let j = 0; j < MyCards.cardsList[i].tags.trim().split(",").length; j++)
+          {
+            if (inputTags.value.trim().split(",").includes(MyCards.cardsList[i].tags.trim().split(",")[j]))
+            {
+              return "TAG_ERROR";
+            }
+          }
+        }
+        return true;
+      }
+      else
+      {
+        return "DEADLINE_ERROR";
+      }
+    }
+    else
+    {
+      return "DEADLINE_ERROR";
+    }
+  }
+  else
+  {
+    return "NULL_ERROR";
+  }
+}
+
+function onSaveAddClick() {
+  
+  if(checkValidation() === true)
+  {
+    idNum++;
+
+    MyCards.addData(
+      idNum,
+      inputTitle.value,
+      inputDesc.value,
+      inputDeadline.value,
+      inputTags.value,
+      inputStatus.value,
+      getNowTime(),
+      getNowTime(),
+      "created",
+      getNowTime()
+    );
+    MyCards.submitAddedData();
+    MyCards.renderSumbittedAddedData();
+    dialogAddWindow.close();
+  }
+  else if(checkValidation() == "NULL_ERROR"){
+    errorText.textContent = "Все пункты задачи не должны быть пустыми";
+    errorsWindow.showModal();
+  }
+  else if(checkValidation() == "DEADLINE_ERROR")
+  {
+    errorText.textContent = "Неверный формат деадлайна";
+    errorsWindow.showModal();
+  }
+  else if(checkValidation() == "TAG_ERROR")
+  {
+    errorText.textContent = "Данный тег уже существует";
+    errorsWindow.showModal();
+  }
 }
 
 function onSaveEditClick()
@@ -420,11 +481,13 @@ function onExitClick() {
 saveAddButton.addEventListener("click", onSaveAddClick);
 saveEditButton.addEventListener("click", onSaveEditClick);
 addButton.addEventListener("click", onAddClick);
+errorExitButton.addEventListener("click", () => errorsWindow.close());
 
 Array.prototype.forEach.call(exitButtons, function(element) 
 {
   element.addEventListener("click", onExitClick);
 });
+
 
 
 (function () {
