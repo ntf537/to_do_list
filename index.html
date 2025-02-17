@@ -26,6 +26,16 @@
     </header>
     <main>
       <div class="container">
+        <dialog class="errors-window" id="errors-notification">
+          <div
+            role="error-notification"
+            aria-modal="true"
+            class="inside-window"
+          >
+            <p id="error-text"></p>
+            <button id="error-exit-button">OK</button>
+          </div>
+        </dialog>
         <dialog class="add-task-window" id="add-task-dialog">
           <div
             role="add-task"
