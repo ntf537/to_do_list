@@ -66,7 +66,8 @@
 .task-deadline,
 .task-tag-text,
 .task-status-text,
-.title-of-add-window {
+.title-of-add-window,
+#error-text {
   font-family: Arial, sans-serif;
   word-break: break-all;
 }
@@ -204,7 +205,8 @@
 }
 
 .task-save,
-.task-exit {
+.task-exit,
+#error-exit-button {
   align-items: center;
   background-color: #0a66c2;
   border: 0;
@@ -228,4 +230,20 @@
 {
   font-size: 35px;
   font-weight: 700;
+}
+
+#error-text
+{
+  color: #ffff;
+}
+
+.errors-window
+{
+  align-items: center; 
+  width: 350px;
+  background-color: #f5f5f5;
+  margin: auto auto;
+  border-radius: 20px;
+  border-color: #e74c3c;
+  background-color: #e74c3c;
 }
