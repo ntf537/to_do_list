@@ -26,6 +26,21 @@
     </header>
     <main>
       <div class="container">
+        <dialog class="confirm-window" id="confirm-of-delete">
+          <div
+            role="confirm"
+            aria-modal="true"
+            class="inside-window"
+          >
+            <p id="confirm-text">Вы уверены, что хотите удалить задачу?</p>
+
+            <div class="confirm-bottom">
+              <button id="confirm-yes-button">Да</button>
+              <button id="confirm-exit-button">Выйти</button>
+            </div>
+          </div>
+        </dialog>
+
         <dialog class="errors-window" id="errors-notification">
           <div
             role="error-notification"
@@ -158,7 +173,7 @@
           </div>
         </dialog>
         <ul class="to-do-list" id="cards-list-ul">
-          <!-- <li>
+          <!-- <li class="to-do-list-li">
             <div class="card">
               <p class="task-title">Название</p>
               <p class="task-desc">
