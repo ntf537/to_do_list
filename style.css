@@ -67,7 +67,8 @@
 .task-tag-text,
 .task-status-text,
 .title-of-add-window,
-#error-text {
+#error-text,
+#confirm-text {
   font-family: Arial, sans-serif;
   word-break: break-all;
 }
@@ -200,13 +201,23 @@
 .save-and-exit {
   width: 475px;
   display: flex;
-  padding-top: 15px;
+  margin-top: 15px;
+  justify-content: space-around;
+}
+
+.confirm-bottom
+{
+  width: 340px;
+  display: flex;
+  margin-top: 15px;
   justify-content: space-around;
 }
 
 .task-save,
 .task-exit,
-#error-exit-button {
+#error-exit-button,
+#confirm-yes-button,
+#confirm-exit-button {
   align-items: center;
   background-color: #0a66c2;
   border: 0;
@@ -237,7 +248,8 @@
   color: #ffff;
 }
 
-.errors-window
+.errors-window,
+.confirm-window
 {
   align-items: center; 
   width: 350px;
