@@ -2,16 +2,21 @@ const myURL = "D:\to_do_listcards-data";
 
 let idNum = -1;
 let editId;
+let deleteId;
 
 const temp = document.getElementById("temp");
 const icon = document.getElementById("icon");
 const rate = document.getElementById("rate");
 
+const liList = document.getElementsByClassName("to-do-list-li")
 const cardsListUl = document.getElementById("cards-list-ul");
 const editButton = document.getElementById("edit-button");
 const addButton = document.getElementById("add-button");
 
 const errorText = document.getElementById("error-text");
+
+const confirmYesButton = document.getElementById("confirm-yes-button");
+const confirmExitButton = document.getElementById("confirm-exit-button");
 
 const saveAddButton = document.getElementById("add-task-save-button");
 const saveEditButton = document.getElementById("edit-task-save-button")
@@ -23,6 +28,7 @@ const editButtons = document.getElementsByClassName("task-edit");
 const dialogAddWindow = document.getElementById("add-task-dialog");
 const dialogEditWindow = document.getElementById("edit-task-dialog");
 const errorsWindow = document.getElementById("errors-notification")
+const confirmWindow = document.getElementById("confirm-of-delete");
 
 const inputTitle = document.getElementById("get-task-title");
 const inputDesc = document.getElementById("get-task-description");
@@ -83,6 +89,35 @@ class Card {
   }
 }
 
+function deleteCard(obj, idCard)
+  {
+    liList[idCard].remove();
+    confirmWindow.close();
+    MyCards.cardsList.splice(idCard - 1, 1);
+    localStorage.removeItem("cards");
+    const cardsArr = [];
+    for(let i = 0; i < MyCards.cardsList.length; i++)
+    {
+      cardsArr.push({id: obj.cardsList[i].id,
+        title: obj.cardsList[i].title,
+        description: obj.cardsList[i].description,
+        deadline: obj.cardsList[i].deadline,
+        tags: obj.cardsList[i].tags,
+        status: obj.cardsList[i].status,
+        createdAt: obj.cardsList[i].createdAt,
+        updatedAt: obj.cardsList[i].updatedAt,
+        history: 
+        {
+          action: obj.cardsList[i].action,
+          timestamp: obj.cardsList[i].timestamp
+        }
+      })
+    }
+    localStorage.setItem(
+      "cards",
+      JSON.stringify(cardsArr));
+  }
+
 class Cards {
   cardsList = [];
   addData(
@@ -112,6 +147,7 @@ class Cards {
     this.cardsList.push(NewCard);
   }
 
+
   submitAddedData() {
     const cardsArr = [];
     for(let i = 0; i < this.cardsList.length; i++)
@@ -134,7 +170,7 @@ class Cards {
     localStorage.setItem(
       "cards",
       JSON.stringify(cardsArr));
-    for (let i = 0; i < JSON.parse(localStorage.getItem("cards")).length; i++) {
+    /* for (let i = 0; i < JSON.parse(localStorage.getItem("cards")).length; i++) {
       let {
         id: idValue,
         title: titleValue,
@@ -146,7 +182,7 @@ class Cards {
         updatedAt: updatedAtValue,
         history: {action: actionValue, timestamp: timestampValue},
       } = JSON.parse(localStorage.getItem("cards"))[i];
-      /* console.log(
+      console.log(
         "id: " +
           idValue +
           "; title: " +
@@ -167,8 +203,8 @@ class Cards {
           actionValue +
           "; timestamp: " +
           timestampValue
-      ); */
-    }
+      );
+    } */
   }
 
   renderSumbittedAddedData() {
@@ -200,6 +236,7 @@ class Cards {
     const cardStatusText = document.createElement("p");
     const cardDeadline = document.createElement("p");
 
+    cardsListLi.classList.add("to-do-list-li")
     cardDiv.classList.add("card");
     cardTitle.classList.add("task-title");
     cardDesc.classList.add("task-desc");
@@ -230,7 +267,11 @@ class Cards {
       console.log(editId);
     })
 
-    cardDeleteButton.addEventListener("click", () => cardsListLi.remove());
+    cardDeleteButton.addEventListener("click", function()
+    {
+      confirmAction();
+      deleteId = idValue;  
+    });
 
     cardsListUl.append(cardsListLi);
     cardsListLi.append(cardDiv);
@@ -325,9 +366,6 @@ function getNowTime() {
   return String(date.toISOString().slice(0, 10));
 }
 
-function onDeleteClick() {
-  MyCards.deleteCard();
-}
 async function fetchWeatherData() {
   const weatherUrl =
     "https://api.openweathermap.org/data/2.5/weather?lat=53.55&lon=27.33&appid=0a7d636a97a3858fc7eeb7f659688885";
@@ -411,6 +449,11 @@ function checkValidation()
   }
 }
 
+function confirmAction()
+{
+  confirmWindow.showModal();
+}
+
 function onSaveAddClick() {
   
   if(checkValidation() === true)
@@ -482,13 +525,13 @@ saveAddButton.addEventListener("click", onSaveAddClick);
 saveEditButton.addEventListener("click", onSaveEditClick);
 addButton.addEventListener("click", onAddClick);
 errorExitButton.addEventListener("click", () => errorsWindow.close());
+confirmYesButton.addEventListener("click", () => deleteCard(MyCards, deleteId));
+confirmExitButton.addEventListener("click", () => confirmWindow.close());
 
 Array.prototype.forEach.call(exitButtons, function(element) 
 {
   element.addEventListener("click", onExitClick);
 });
-
-
 
 (function () {
   fetchWeatherData();
