@@ -8,7 +8,7 @@ const temp = document.getElementById("temp");
 const icon = document.getElementById("icon");
 const rate = document.getElementById("rate");
 
-const liList = document.getElementsByClassName("to-do-list-li")
+const idList = document.getElementsByClassName("id-card-value")
 const cardsListUl = document.getElementById("cards-list-ul");
 const editButton = document.getElementById("edit-button");
 const addButton = document.getElementById("add-button");
@@ -91,12 +91,18 @@ class Card {
 
 function deleteCard(obj, idCard)
   {
-    liList[idCard].remove();
+    for(let i = 0; i < idList.length; i++)
+    {
+      if(Number(idList[i].textContent) == idCard)
+      {
+        idList[i].parentElement.parentElement.remove();
+      }
+    }
     confirmWindow.close();
-    MyCards.cardsList.splice(idCard - 1, 1);
+    obj.cardsList.splice(idCard - 1, 1);
     localStorage.removeItem("cards");
     const cardsArr = [];
-    for(let i = 0; i < MyCards.cardsList.length; i++)
+    for(let i = 0; i < obj.cardsList.length; i++)
     {
       cardsArr.push({id: obj.cardsList[i].id,
         title: obj.cardsList[i].title,
@@ -146,7 +152,6 @@ class Cards {
     );
     this.cardsList.push(NewCard);
   }
-
 
   submitAddedData() {
     const cardsArr = [];
@@ -224,6 +229,7 @@ class Cards {
 
     const cardsListLi = document.createElement("li");
 
+    const cardId = document.createElement("p");
     const cardDiv = document.createElement("div");
     const cardTitle = document.createElement("p");
     const cardDesc = document.createElement("p");
@@ -236,7 +242,8 @@ class Cards {
     const cardStatusText = document.createElement("p");
     const cardDeadline = document.createElement("p");
 
-    cardsListLi.classList.add("to-do-list-li")
+    cardId.classList.add("id-card-value");
+    cardsListLi.classList.add("to-do-list-li");
     cardDiv.classList.add("card");
     cardTitle.classList.add("task-title");
     cardDesc.classList.add("task-desc");
@@ -249,6 +256,7 @@ class Cards {
     cardStatusText.classList.add("task-status-text");
     cardDeadline.classList.add("task-deadline");
 
+    cardId.textContent = idValue;
     cardTitle.textContent = titleValue;
     cardDesc.textContent = descValue;
     cardTagText.textContent = tagConversion(tagsValue);
@@ -264,17 +272,17 @@ class Cards {
       editStatus.value = statusValue;
       editDeadline.value = deadlineValue;
       editId = idValue;
-      console.log(editId);
     })
 
     cardDeleteButton.addEventListener("click", function()
     {
       confirmAction();
-      deleteId = idValue;  
+      deleteId = idValue;
     });
 
     cardsListUl.append(cardsListLi);
     cardsListLi.append(cardDiv);
+    cardDiv.append(cardId);
     cardDiv.append(cardTitle);
     cardDiv.append(cardDesc);
     cardDiv.append(cardTagDiv);
@@ -410,9 +418,11 @@ function onAddClick() {
   dialogAddWindow.showModal();
 }
 
-function checkValidation()
+function checkValidation(condition)
 {
-  if(inputTitle.value.trim().length != 0 && inputDesc.value.trim().length != 0 && inputDeadline.value.trim().length != 0 && inputTags.value.trim().length != 0 && inputStatus.value.trim().length !=0)
+  if(condition == "FOR_ADD")
+  {
+    if(inputTitle.value.trim().length != 0 && inputDesc.value.trim().length != 0 && inputDeadline.value.trim().length != 0 && inputTags.value.trim().length != 0 && inputStatus.value.trim().length !=0)
   {
     if(/^\d{4}-\d{2}-\d{2}$/.test(inputDeadline.value))
     {
@@ -420,12 +430,50 @@ function checkValidation()
       const date = new Date(year, month - 1, day);
 
       if(date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day)
-      {
+      {   
         for(let i = 0; i < MyCards.cardsList.length; i++)
         {
           for(let j = 0; j < MyCards.cardsList[i].tags.trim().split(",").length; j++)
           {
             if (inputTags.value.trim().split(",").includes(MyCards.cardsList[i].tags.trim().split(",")[j]))
+            {
+            return "TAG_ERROR";
+            }
+          }
+        }
+        return true;
+      }
+      else
+      {
+        return "DEADLINE_ERROR";
+      }
+    }
+    else
+    {
+      return "DEADLINE_ERROR";
+    }
+  }
+  else
+  {
+    return "NULL_ERROR";
+  }
+  }
+  else if (condition == "FOR_EDIT")
+  {
+    if(editTitle.value.trim().length != 0 && editDesc.value.trim().length != 0 && editDeadline.value.trim().length != 0 && editTags.value.trim().length != 0 && editStatus.value.trim().length !=0)
+  {
+    if(/^\d{4}-\d{2}-\d{2}$/.test(editDeadline.value))
+    {
+      const [year, month, day] = editDeadline.value.split('-').map(Number);
+      const date = new Date(year, month - 1, day);
+
+      if(date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day)
+      {   
+        for(let i = 0; i < MyCards.cardsList.length; i++)
+        {
+          for(let j = 0; j < MyCards.cardsList[i].tags.trim().split(",").length; j++)
+          {
+            if (editTags.value.trim().split(",").includes(MyCards.cardsList[i].tags.trim().split(",")[j]) && i != editId)
             {
               return "TAG_ERROR";
             }
@@ -447,6 +495,8 @@ function checkValidation()
   {
     return "NULL_ERROR";
   }
+  }
+  
 }
 
 function confirmAction()
@@ -456,7 +506,7 @@ function confirmAction()
 
 function onSaveAddClick() {
   
-  if(checkValidation() === true)
+  if(checkValidation("FOR_ADD") === true)
   {
     idNum++;
 
@@ -476,16 +526,16 @@ function onSaveAddClick() {
     MyCards.renderSumbittedAddedData();
     dialogAddWindow.close();
   }
-  else if(checkValidation() == "NULL_ERROR"){
+  else if(checkValidation("FOR_ADD") == "NULL_ERROR"){
     errorText.textContent = "Все пункты задачи не должны быть пустыми";
     errorsWindow.showModal();
   }
-  else if(checkValidation() == "DEADLINE_ERROR")
+  else if(checkValidation("FOR_ADD") == "DEADLINE_ERROR")
   {
     errorText.textContent = "Неверный формат деадлайна";
     errorsWindow.showModal();
   }
-  else if(checkValidation() == "TAG_ERROR")
+  else if(checkValidation("FOR_ADD") == "TAG_ERROR")
   {
     errorText.textContent = "Данный тег уже существует";
     errorsWindow.showModal();
@@ -494,21 +544,38 @@ function onSaveAddClick() {
 
 function onSaveEditClick()
 {
-  MyCards.editData(
-    editId,
-    editTitle.value,
-    editDesc.value,
-    editDeadline.value,
-    editTags.value,
-    editStatus.value,
-    getNowTime(),
-    "updated",
-    getNowTime()
-  );
+  if(checkValidation("FOR_EDIT") === true)
+  {
+    MyCards.editData(
+      editId,
+      editTitle.value,
+      editDesc.value,
+      editDeadline.value,
+      editTags.value,
+      editStatus.value,
+      getNowTime(),
+      "updated",
+      getNowTime()
+    );
 
-  MyCards.submitEditedData(editId);
-  MyCards.renderSubmittedEditedData(editId);
-  dialogEditWindow.close();
+    MyCards.submitEditedData(editId);
+    MyCards.renderSubmittedEditedData(editId);
+    dialogEditWindow.close();
+  }
+  else if(checkValidation("FOR_EDIT") == "NULL_ERROR"){
+    errorText.textContent = "Все пункты задачи не должны быть пустыми";
+    errorsWindow.showModal();
+  }
+  else if(checkValidation("FOR_EDIT") == "DEADLINE_ERROR")
+  {
+    errorText.textContent = "Неверный формат деадлайна";
+    errorsWindow.showModal();
+  }
+  else if(checkValidation("FOR_EDIT") == "TAG_ERROR")
+  {
+    errorText.textContent = "Данный тег уже существует";
+    errorsWindow.showModal();
+  }
 }
 
 function onEditClick()
