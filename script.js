@@ -89,7 +89,7 @@ class Card {
   }
 }
 
-function deleteCard(obj, idCard)
+function deleteCard(idCard)
   {
     for(let i = 0; i < idList.length; i++)
     {
@@ -99,26 +99,31 @@ function deleteCard(obj, idCard)
       }
     }
     confirmWindow.close();
-    obj.cardsList.splice(idCard - 1, 1);
-    localStorage.removeItem("cards");
     const cardsArr = [];
-    for(let i = 0; i < obj.cardsList.length; i++)
-    {
-      cardsArr.push({id: obj.cardsList[i].id,
-        title: obj.cardsList[i].title,
-        description: obj.cardsList[i].description,
-        deadline: obj.cardsList[i].deadline,
-        tags: obj.cardsList[i].tags,
-        status: obj.cardsList[i].status,
-        createdAt: obj.cardsList[i].createdAt,
-        updatedAt: obj.cardsList[i].updatedAt,
-        history: 
-        {
-          action: obj.cardsList[i].action,
-          timestamp: obj.cardsList[i].timestamp
-        }
+    for (let i = 0; i < JSON.parse(localStorage.getItem("cards")).length; i++) {
+      let {
+        id: idValue,
+        title: titleValue,
+        description: descValue,
+        deadline: deadlineValue,
+        tags: tagsValue,
+        status: statusValue,
+        createdAt: createdAtValue,
+        updatedAt: updatedAtValue,
+        history: historyArr,
+      } = JSON.parse(localStorage.getItem("cards"))[i];
+      cardsArr.push({id: idValue,
+        title: titleValue,
+        description: descValue,
+        deadline: deadlineValue,
+        tags: tagsValue,
+        status: statusValue,
+        createdAt: createdAtValue,
+        updatedAt: updatedAtValue,
+        history: historyArr
       })
     }
+    cardsArr.splice(idCard - 1, 1);
     localStorage.setItem(
       "cards",
       JSON.stringify(cardsArr));
@@ -166,10 +171,10 @@ class Cards {
         createdAt: this.cardsList[i].createdAt,
         updatedAt: this.cardsList[i].updatedAt,
         history: 
-        {
+        [{
           action: this.cardsList[i].action,
           timestamp: this.cardsList[i].timestamp
-        }
+        }]
       })
     }
     localStorage.setItem(
@@ -220,9 +225,6 @@ class Cards {
       deadline: deadlineValue,
       tags: tagsValue,
       status: statusValue,
-      createdAt: createdAtValue,
-      updatedAt: updatedAtValue,
-      history: {action: actionValue, timestamp: timestampValue},
     } = JSON.parse(localStorage.getItem("cards"))[
       JSON.parse(localStorage.getItem("cards")).length - 1
     ];
@@ -317,10 +319,12 @@ class Cards {
 
   submitEditedData()
   {
-    localStorage.removeItem("cards");
     const cardsArr = [];
     for(let i = 0; i < this.cardsList.length; i++)
     {
+      let {history: historyArrValue} = JSON.parse(localStorage.getItem("cards"))[i];
+      let historyArr = historyArrValue;
+      historyArr.push({action: this.cardsList[i].action, timestamp: this.cardsList[i].timestamp});
       cardsArr.push({id: this.cardsList[i].id,
         title: this.cardsList[i].title,
         description: this.cardsList[i].description,
@@ -329,13 +333,10 @@ class Cards {
         status: this.cardsList[i].status,
         createdAt: this.cardsList[i].createdAt,
         updatedAt: this.cardsList[i].updatedAt,
-        history: 
-        {
-          action: this.cardsList[i].action,
-          timestamp: this.cardsList[i].timestamp
-        }
+        history: historyArr
       })
     }
+    localStorage.removeItem("cards");
     localStorage.setItem("cards",JSON.stringify(cardsArr));
   }
 
@@ -347,10 +348,7 @@ class Cards {
       description: descValue,
       deadline: deadlineValue,
       tags: tagsValue,
-      status: statusValue,
-      createdAt: createdAtValue,
-      updatedAt: updatedAtValue,
-      history: {action: actionValue, timestamp: timestampValue},
+      status: statusValue
     } = JSON.parse(localStorage.getItem("cards"))[id];
 
     const cardTitle = document.getElementsByClassName("task-title")[id];
@@ -592,7 +590,7 @@ saveAddButton.addEventListener("click", onSaveAddClick);
 saveEditButton.addEventListener("click", onSaveEditClick);
 addButton.addEventListener("click", onAddClick);
 errorExitButton.addEventListener("click", () => errorsWindow.close());
-confirmYesButton.addEventListener("click", () => deleteCard(MyCards, deleteId));
+confirmYesButton.addEventListener("click", () => deleteCard(deleteId));
 confirmExitButton.addEventListener("click", () => confirmWindow.close());
 
 Array.prototype.forEach.call(exitButtons, function(element) 
