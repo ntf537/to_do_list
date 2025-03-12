@@ -8,10 +8,15 @@ const temp = document.getElementById("temp");
 const icon = document.getElementById("icon");
 const rate = document.getElementById("rate");
 
-const idList = document.getElementsByClassName("id-card-value")
+const listItems = document.querySelectorAll('.to-do-list-li');
+const idList = document.getElementsByClassName("id-card-value");
 const cardsListUl = document.getElementById("cards-list-ul");
 const editButton = document.getElementById("edit-button");
 const addButton = document.getElementById("add-button");
+
+const selectList = document.getElementById("select-element");
+
+const sortButton = document.getElementById("sort-button");
 
 const errorText = document.getElementById("error-text");
 
@@ -89,18 +94,20 @@ class Card {
   }
 }
 
-function deleteCard(idCard)
+function deleteCard()
   {
     for(let i = 0; i < idList.length; i++)
     {
-      if(Number(idList[i].textContent) == idCard)
+      if(Number(idList[i].textContent) === deleteId)
       {
         idList[i].parentElement.parentElement.remove();
       }
     }
     confirmWindow.close();
-    const cardsArr = [];
-    for (let i = 0; i < JSON.parse(localStorage.getItem("cards")).length; i++) {
+    MyCards.cardsList.splice(0, MyCards.cardsList.length);
+    let cardsArr = [];
+    let notUpdatedCardsArr = JSON.parse(localStorage.getItem("cards"));
+    for (let i = 0; i < notUpdatedCardsArr.length; i++) {
       let {
         id: idValue,
         title: titleValue,
@@ -111,22 +118,54 @@ function deleteCard(idCard)
         createdAt: createdAtValue,
         updatedAt: updatedAtValue,
         history: historyArr,
-      } = JSON.parse(localStorage.getItem("cards"))[i];
-      cardsArr.push({id: idValue,
-        title: titleValue,
-        description: descValue,
-        deadline: deadlineValue,
-        tags: tagsValue,
-        status: statusValue,
-        createdAt: createdAtValue,
-        updatedAt: updatedAtValue,
-        history: historyArr
-      })
+      } = notUpdatedCardsArr[i];
+      if(idValue != deleteId)
+      {
+        cardsArr.push({id: idValue,
+          title: titleValue,
+          description: descValue,
+          deadline: deadlineValue,
+          tags: tagsValue,
+          status: statusValue,
+          createdAt: createdAtValue,
+          updatedAt: updatedAtValue,
+          history: historyArr
+        })
+        MyCards.addData(idValue, titleValue, descValue, deadlineValue, tagsValue, statusValue, createdAtValue, updatedAtValue);
+      }
     }
-    cardsArr.splice(idCard - 1, 1);
+    MyCards.cardsList.splice(deleteId, 1);
     localStorage.setItem(
       "cards",
       JSON.stringify(cardsArr));
+      for (let i = 0; i < JSON.parse(localStorage.getItem("cards")).length; i++) {
+        let {
+          id: idValue,
+          title: titleValue,
+          description: descValue,
+          deadline: deadlineValue,
+          tags: tagsValue,
+          status: statusValue,
+          createdAt: createdAtValue,
+          updatedAt: updatedAtValue
+        } = JSON.parse(localStorage.getItem("cards"))[i];
+        console.log(
+          "id: " +
+            idValue +
+            "; title: " +
+            titleValue +
+            "; desc: " +
+            descValue +
+            "; deadline: " +
+            deadlineValue +
+            "; tags: " +
+            tagsValue +
+            "; status: " +
+            statusValue +
+            "; createdAt: " +
+            createdAtValue +
+            "; updatedAt: " + updatedAtValue)
+      }
   }
 
 class Cards {
@@ -159,7 +198,7 @@ class Cards {
   }
 
   submitAddedData() {
-    const cardsArr = [];
+    let cardsArr = [];
     for(let i = 0; i < this.cardsList.length; i++)
     {
       cardsArr.push({id: this.cardsList[i].id,
@@ -215,6 +254,7 @@ class Cards {
           timestampValue
       );
     } */
+    
   }
 
   renderSumbittedAddedData() {
@@ -274,12 +314,12 @@ class Cards {
       editStatus.value = statusValue;
       editDeadline.value = deadlineValue;
       editId = idValue;
-    })
+    });
 
     cardDeleteButton.addEventListener("click", function()
     {
-      confirmAction();
       deleteId = idValue;
+      confirmAction();
     });
 
     cardsListUl.append(cardsListLi);
@@ -317,24 +357,41 @@ class Cards {
     this.cardsList[id].timestamp = timestamp;
   }
 
-  submitEditedData()
+  submitEditedData(id)
   {
     const cardsArr = [];
     for(let i = 0; i < this.cardsList.length; i++)
     {
-      let {history: historyArrValue} = JSON.parse(localStorage.getItem("cards"))[i];
-      let historyArr = historyArrValue;
-      historyArr.push({action: this.cardsList[i].action, timestamp: this.cardsList[i].timestamp});
-      cardsArr.push({id: this.cardsList[i].id,
-        title: this.cardsList[i].title,
-        description: this.cardsList[i].description,
-        deadline: this.cardsList[i].deadline,
-        tags: this.cardsList[i].tags,
-        status: this.cardsList[i].status,
-        createdAt: this.cardsList[i].createdAt,
-        updatedAt: this.cardsList[i].updatedAt,
-        history: historyArr
-      })
+      if(i == id)
+      {
+        let {history: historyArrValue} = JSON.parse(localStorage.getItem("cards"))[i];
+        let historyArr = historyArrValue;
+        historyArr.push({action: this.cardsList[i].action, timestamp: this.cardsList[i].timestamp});
+        cardsArr.push({id: this.cardsList[i].id,
+          title: this.cardsList[i].title,
+          description: this.cardsList[i].description,
+          deadline: this.cardsList[i].deadline,
+          tags: this.cardsList[i].tags,
+          status: this.cardsList[i].status,
+          createdAt: this.cardsList[i].createdAt,
+          updatedAt: this.cardsList[i].updatedAt,
+          history: historyArr
+        })
+      }
+      else
+      {
+        let {history: historyArrValue} = JSON.parse(localStorage.getItem("cards"))[i];
+        cardsArr.push({id: this.cardsList[i].id,
+          title: this.cardsList[i].title,
+          description: this.cardsList[i].description,
+          deadline: this.cardsList[i].deadline,
+          tags: this.cardsList[i].tags,
+          status: this.cardsList[i].status,
+          createdAt: this.cardsList[i].createdAt,
+          updatedAt: this.cardsList[i].updatedAt,
+          history: historyArrValue
+        })
+      }  
     }
     localStorage.removeItem("cards");
     localStorage.setItem("cards",JSON.stringify(cardsArr));
@@ -500,6 +557,7 @@ function checkValidation(condition)
 function confirmAction()
 {
   confirmWindow.showModal();
+  console.log("deleteID: " + deleteId);
 }
 
 function onSaveAddClick() {
@@ -524,16 +582,16 @@ function onSaveAddClick() {
     MyCards.renderSumbittedAddedData();
     dialogAddWindow.close();
   }
-  else if(checkValidation("FOR_ADD") == "NULL_ERROR"){
+  else if(checkValidation("FOR_ADD") === "NULL_ERROR"){
     errorText.textContent = "Все пункты задачи не должны быть пустыми";
     errorsWindow.showModal();
   }
-  else if(checkValidation("FOR_ADD") == "DEADLINE_ERROR")
+  else if(checkValidation("FOR_ADD") === "DEADLINE_ERROR")
   {
     errorText.textContent = "Неверный формат деадлайна";
     errorsWindow.showModal();
   }
-  else if(checkValidation("FOR_ADD") == "TAG_ERROR")
+  else if(checkValidation("FOR_ADD") === "TAG_ERROR")
   {
     errorText.textContent = "Данный тег уже существует";
     errorsWindow.showModal();
@@ -560,16 +618,16 @@ function onSaveEditClick()
     MyCards.renderSubmittedEditedData(editId);
     dialogEditWindow.close();
   }
-  else if(checkValidation("FOR_EDIT") == "NULL_ERROR"){
+  else if(checkValidation("FOR_EDIT") === "NULL_ERROR"){
     errorText.textContent = "Все пункты задачи не должны быть пустыми";
     errorsWindow.showModal();
   }
-  else if(checkValidation("FOR_EDIT") == "DEADLINE_ERROR")
+  else if(checkValidation("FOR_EDIT") === "DEADLINE_ERROR")
   {
     errorText.textContent = "Неверный формат деадлайна";
     errorsWindow.showModal();
   }
-  else if(checkValidation("FOR_EDIT") == "TAG_ERROR")
+  else if(checkValidation("FOR_EDIT") === "TAG_ERROR")
   {
     errorText.textContent = "Данный тег уже существует";
     errorsWindow.showModal();
@@ -586,12 +644,141 @@ function onExitClick() {
   dialogEditWindow.close();
 }
 
+function dateOfCreationSort()
+{
+  let sortedArr = [];
+  let unsortedArr = JSON.parse(localStorage.getItem("cards"));
+  let titlesArr = [];
+  for(let i = 0; i < unsortedArr.length; i++)
+  {
+    titlesArr.push(unsortedArr[i].title);
+  }
+  let sortedTitlesArr = titlesArr.sort((a, b) => {
+    if (a.trim().toLowerCase() < b.trim().toLowerCase()) {
+      return -1;
+    }
+    if (a.trim().toLowerCase() > b.trim().toLowerCase()) {
+      return 1;
+    }
+    return 0;
+  })
+
+  for(let i = 0; i < sortedTitlesArr.length; i++)
+  {
+    for(let j = 0; j < unsortedArr.length; j++)
+    {
+      if(sortedTitlesArr[i] === unsortedArr[j].title)
+      {
+        sortedArr.push(unsortedArr[j]);
+      }
+    }
+  }
+
+  for(let i = 0; i < listItems.length; i++)
+  {
+    listItems[i].remove();
+  }
+
+  /* sortedArr.forEach(item => console.log(item))
+
+  for(let i = 0; i < sortedArr.length; i++)
+  {
+    let {
+      id: idValue,
+      title: titleValue,
+      description: descValue,
+      deadline: deadlineValue,
+      tags: tagsValue,
+      status: statusValue,
+    } = sortedArr[i];
+  
+    const cardsListLi = document.createElement("li");
+  
+    const cardId = document.createElement("p");
+    const cardDiv = document.createElement("div");
+    const cardTitle = document.createElement("p");
+    const cardDesc = document.createElement("p");
+    const cardTagDiv = document.createElement("div");
+    const cardTagText = document.createElement("p");
+    const cardBottomDiv = document.createElement("div");
+    const cardEditButton = document.createElement("button");
+    const cardDeleteButton = document.createElement("button");
+    const cardStatusDiv = document.createElement("div");
+    const cardStatusText = document.createElement("p");
+    const cardDeadline = document.createElement("p");
+  
+    cardId.classList.add("id-card-value");
+    cardsListLi.classList.add("to-do-list-li");
+    cardDiv.classList.add("card");
+    cardTitle.classList.add("task-title");
+    cardDesc.classList.add("task-desc");
+    cardTagDiv.classList.add("task-tag");
+    cardTagText.classList.add("task-tag-text");
+    cardBottomDiv.classList.add("card-bottom");
+    cardEditButton.classList.add("task-edit");
+    cardDeleteButton.classList.add("task-delete");
+    cardStatusDiv.classList.add("task-status");
+    cardStatusText.classList.add("task-status-text");
+    cardDeadline.classList.add("task-deadline");
+  
+    cardId.textContent = idValue;
+    cardTitle.textContent = titleValue;
+    cardDesc.textContent = descValue;
+    cardTagText.textContent = tagConversion(tagsValue);
+    cardStatusText.textContent = statusValue;
+    cardDeadline.textContent = deadlineValue;
+  
+    cardEditButton.addEventListener("click", function()
+    {
+      dialogEditWindow.showModal();
+      editTitle.value = titleValue;
+      editDesc.value = descValue;
+      editTags.value = tagsValue;
+      editStatus.value = statusValue;
+      editDeadline.value = deadlineValue;
+      editId = idValue;
+    });
+  
+    cardDeleteButton.addEventListener("click", function()
+    {
+      deleteId = idValue;
+      confirmAction();
+    });
+  
+    cardsListUl.append(cardsListLi);
+    cardsListLi.append(cardDiv);
+    cardDiv.append(cardId);
+    cardDiv.append(cardTitle);
+    cardDiv.append(cardDesc);
+    cardDiv.append(cardTagDiv);
+    cardTagDiv.append(cardTagText);
+    cardDiv.append(cardBottomDiv);
+    cardBottomDiv.append(cardEditButton);
+    cardBottomDiv.append(cardDeleteButton);
+    cardBottomDiv.append(cardStatusDiv);
+    cardStatusDiv.append(cardStatusText);
+    cardBottomDiv.append(cardDeadline); 
+
+  }  */
+}
+
+function onSortClick()
+{
+  if(selectList.value === "ALPHABET")
+  {
+    dateOfCreationSort();
+  }
+  console.log(selectList.value);
+}
+
 saveAddButton.addEventListener("click", onSaveAddClick);
 saveEditButton.addEventListener("click", onSaveEditClick);
 addButton.addEventListener("click", onAddClick);
 errorExitButton.addEventListener("click", () => errorsWindow.close());
-confirmYesButton.addEventListener("click", () => deleteCard(deleteId));
+confirmYesButton.addEventListener("click", () => deleteCard());
 confirmExitButton.addEventListener("click", () => confirmWindow.close());
+
+sortButton.addEventListener("click", onSortClick);
 
 Array.prototype.forEach.call(exitButtons, function(element) 
 {
