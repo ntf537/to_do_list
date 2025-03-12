@@ -14,8 +14,8 @@
         <button class="task-add" id="add-button"></button>
         <section class="menu-right">
           <section class="weather">
-            <p class="weather-text" id="temp"></p>
-            <img src="null" alt="" class="weather-img" id="icon" />
+            <p class="weather-text" id="temp">weather-text</p>
+            <img src="null-img" alt="" class="weather-img" id="icon" />
           </section>
           <section class="exch-rate">
             <p class="rate-text" id="rate"></p>
@@ -172,6 +172,36 @@
             </div>
           </div>
         </dialog>
+        <div class="filter-cards">
+          <div class="select-menu" id="select">
+            <p class="filter-text">Отсортировать по:</p>
+            <select class="select-menu" id="select-element">
+              <option value="DATE_OF_CREATION">Дате создания</option>
+              <option value="ALPHABET">Алфавиту</option>
+              <option value="STATUS">Статусу</option>
+            </select>  
+            <button id="sort-button">Отсортировать</button>
+          </div>
+          <div class="filter-menu">
+            <p class="filter-text">Фильтрация по:</p>
+            <div class="filter-checkboxes">
+              <div class="checkbox-and-text">
+                <input type="checkbox" class="checkbox-input">
+                <p class="filter-text">Статусу</p>
+              </div>
+              <div class="checkbox-and-text">
+                <input type="checkbox" class="checkbox-input">
+                <p class="filter-text">Дате создания</p>
+              </div>
+              <div class="checkbox-and-text">
+                <input type="checkbox" class="checkbox-input">
+                <p class="filter-text">Деадлайну</p>
+              </div>
+            </div>
+            <button id="filter-button">Отфильтровать</button>
+          </div>
+          
+        </div>
         <ul class="to-do-list" id="cards-list-ul">
           <!-- <li class="to-do-list-li">
             <div class="card" id=>
