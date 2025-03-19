@@ -160,6 +160,7 @@
 }
 
 .to-do-list {
+  margin-top: 15px;
   list-style-type: none;
   display: flex;
   flex-wrap: wrap;
@@ -228,7 +229,8 @@
 #confirm-yes-button,
 #confirm-exit-button,
 #filter-button,
-#sort-button {
+#sort-button,
+#show-all {
   align-items: center;
   background-color: #0a66c2;
   border: 0;
@@ -321,4 +323,8 @@
   gap: 5px;
 }
 
-
+.filter-and-show
+{
+  display: flex;
+  gap: 15px;
+}
