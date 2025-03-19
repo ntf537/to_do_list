@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style.css" />
     <title>Document</title>
-  </head>
+  <!-- </head> -->
   <body>
     <header>
       <div class="header-container">
@@ -186,19 +186,25 @@
             <p class="filter-text">Фильтрация по:</p>
             <div class="filter-checkboxes">
               <div class="checkbox-and-text">
-                <input type="checkbox" class="checkbox-input">
+                <input type="checkbox" class="checkbox-input" id="status-checkbox">
+                <input type="text" class="input-text" id="get-status-for-filter">
                 <p class="filter-text">Статусу</p>
               </div>
               <div class="checkbox-and-text">
-                <input type="checkbox" class="checkbox-input">
-                <p class="filter-text">Дате создания</p>
+                <input type="checkbox" class="checkbox-input" id="date-checkbox">
+                <input type="text" class="input-text" id="get-date-for-filter">
+                <p class="filter-text">Дате создания (YYYY-MM-DD)</p>
               </div>
               <div class="checkbox-and-text">
-                <input type="checkbox" class="checkbox-input">
+                <input type="checkbox" class="checkbox-input" id="deadline-checkbox">
+                <input type="text" class="input-text" id="get-deadline-for-filter">
                 <p class="filter-text">Деадлайну</p>
               </div>
             </div>
-            <button id="filter-button">Отфильтровать</button>
+            <div class="filter-and-show">
+              <button id="filter-button">Отфильтровать</button>
+              <button id="show-all">Показать все</button>
+            </div>
           </div>
           
         </div>
